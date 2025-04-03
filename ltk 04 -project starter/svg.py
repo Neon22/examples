@@ -5,6 +5,7 @@ conveniently available).
 
 Author: Nicholas H.Tollervey (ntollervey@anaconda.com)
 Based on original work by: Romain Casati
+Mods for class,todom from Neon22(https://github.com/Neon22)
 
 License: GPL v3 or higher.
 """
@@ -12,15 +13,12 @@ from pyscript import document
 
 def todom(node):
     """
-    Expecting what's returned by calling (say) SVG.Rect(args)
-    - get back entity we can jam into the dom live.
+    Get back entity we can jam into the dom live.
+    - If your inserted svg is being ignored then use this as a wrapper before inserting
     """
     svgnode = document.createElementNS('http://www.w3.org/2000/svg', node.tagName)
-    #print(dir(svgnode))
     for a in node.attributes:
         svgnode.setAttributeNS(None,a, node.attributes[a])
-    #for c in node.childNodes:
-    #    svgnode.addChild(todom(c))
     return svgnode
     
 
@@ -131,8 +129,11 @@ def _tag_func(tag):
                 pass
             elif key == "style":
                 node.setAttribute(
-                    "style", ";".join(f"{k}: {v}" for k, v in value.items())
+                    "style", "; ".join(f"{k}: {v}" for k, v in value.items())
                 )
+            elif key == "_class":
+                node.setAttribute(
+                    "class", str(value))
             elif value is not False:
                 node.setAttribute(key.replace("_", "-"), str(value))
         return node
